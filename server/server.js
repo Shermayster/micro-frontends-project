@@ -1,11 +1,10 @@
 const express = require("express");
 const app = express();
-const path = require("path");
+const cors = require("cors");
 
 const port = 8000;
 
-const bootstrap = "../bootstrap/dist";
-
+app.use(cors());
 app.use("/bootstrap", express.static("bootstrap/dist"));
 app.use("/music", express.static("music/dist"));
 app.use("/welcome", express.static("welcome/dist"));

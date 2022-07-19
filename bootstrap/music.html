@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const baseUrl = "http://localhost:8000/music/";
+      window
+        .fetch(baseUrl)
+        .then(parseToHtml)
+        .then((html) => {
+          createBaseTag();
+          const headNodes = html.querySelector("head");
+          for (const headNode of headNodes.children) {
+            if (headNode.tagName === "SCRIPT") {
+              document.head.appendChild(createScriptTag(headNode));
+            } else {
+              document.head.appendChild(document.adoptNode(headNode));
+            }
+          }
+          const bodyNodes = html.querySelector("body");
+          for (const bodyNode of bodyNodes.children) {
+            document.body.appendChild(document.adoptNode(bodyNode));
+          }
+        });
+
+      function updateRequest(path) {
+        return path.replace(/.*assets/, "assets");
+      }
+
+      function parseToHtml(res) {
+        return res
+          .text()
+          .then((str) => new DOMParser().parseFromString(str, "text/html"));
+      }
+
+      function createScriptTag(node) {
+        const script = document.createElement("script");
+        script.type = "module";
+        script.crossOrigin = "anonymous";
+        script.src = updateRequest(node.src);
+        return script;
+      }
+
+      function createBaseTag() {
+        const el = document.createElement("base");
+        el.href = baseUrl;
+        document.head.appendChild(el);
+      }
+    </script>
+  </body>
+</html>
