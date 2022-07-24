@@ -1,1 +1,3 @@
-import "./style.css";
+import { downloadApp } from "./fetchPage";
+
+downloadApp();

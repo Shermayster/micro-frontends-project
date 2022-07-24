@@ -3,81 +3,11 @@
   <head>
     <base />
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Microfrontends App</title>
   </head>
   <body>
-    <a id="hellolink" href="/hello">hello</a>
-    <a id="musiclink" href="/music">music</a>
     <div id="app"></div>
     <script type="module" src="/main.js"></script>
-    <script>
-      const welcomeLink = document.getElementById("hellolink");
-      const musiclink = document.getElementById("musiclink");
-      const base = (path) => `http://localhost:8000/${path}`;
-      welcomeLink.addEventListener("click", loadWelcome);
-      musiclink.addEventListener("click", loadMusic);
-      function loadWelcome(e) {
-        loadApp(e, base("welcome/"));
-      }
-
-      function loadMusic(e) {
-        loadApp(e, base("music/"));
-      }
-
-      function loadApp(e, baseUrl) {
-        e.preventDefault();
-        document.head.innerHTML = "";
-        fetch(baseUrl)
-          .then(parseToHtml)
-          .then((html) => {
-            createBaseTag(baseUrl);
-            copyHeadTags(html);
-            copyBodyTags(html);
-          });
-      }
-      function copyBodyTags(html) {
-        const bodyNodes = html.querySelector("body");
-        const app = document.createElement("div");
-        for (const bodyNode of bodyNodes.children) {
-          app.appendChild(document.adoptNode(bodyNode));
-        }
-        document.getElementById("app").innerHTML = app.innerHTML;
-      }
-
-      function copyHeadTags(html) {
-        const headNodes = html.querySelector("head");
-        for (const headNode of headNodes.children) {
-          if (headNode.tagName === "SCRIPT") {
-            document.head.appendChild(createScriptTag(headNode));
-          } else {
-            document.head.appendChild(document.adoptNode(headNode));
-          }
-        }
-      }
-      function createBaseTag(baseUrl) {
-        const el = document.createElement("base");
-        el.href = baseUrl;
-        document.head.appendChild(el);
-      }
-      function updateRequest(path) {
-        return path.replace(/.*assets/, "assets");
-      }
-
-      function parseToHtml(res) {
-        return res
-          .text()
-          .then((str) => new DOMParser().parseFromString(str, "text/html"));
-      }
-
-      function createScriptTag(node) {
-        const script = document.createElement("script");
-        script.type = "module";
-        script.crossOrigin = "anonymous";
-        script.src = updateRequest(node.src);
-        return script;
-      }
-    </script>
   </body>
 </html>
